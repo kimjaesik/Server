@@ -5,6 +5,5 @@ namespace DotnetCoreServer.Models{
     {
         
         public long UserID;
-        public List<string> FriendList;
     }
 }

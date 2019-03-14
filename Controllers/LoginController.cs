@@ -16,7 +16,7 @@ namespace DotnetCoreServer.Controllers
             this.userDao = userDao;
         }
 
-        // GET api/user/5
+        // GET Login/Get/Id
         [HttpGet("{id}")]
         public User Get(string user_loginID)
         {
