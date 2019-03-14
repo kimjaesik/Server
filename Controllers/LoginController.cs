@@ -57,8 +57,6 @@ namespace DotnetCoreServer.Controllers
                 return result;
 
             } else { // 없으면  가입시킴..
-                requestUser.User_register_Time = DateTime.Now;
-                requestUser.User_limitPayDate = DateTime.Now;
 
                 userDao.InsertUser(requestUser);
                 user = userDao.FindUserByLoginID(requestUser.User_loginID);

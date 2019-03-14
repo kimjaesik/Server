@@ -25,7 +25,8 @@ namespace DotnetCoreServer.Models
             using(MySqlConnection conn = db.GetConnection())
             {   
                 string query = String.Format(
-                    @"SELECT user_loginID, user_DeviceCode, user_password, user_name, user_email, user_url, user_register_Time, user_isPay ,user_limitPayDate
+                    @"SELECT user_loginID, user_DeviceCode, user_password, user_name, 
+                    user_email, user_url, user_register_Time, user_isPay ,user_limitPayDate
                      FROM tb_users WHERE user_loginID = '{0}'",
                      LoginID);
 
@@ -67,7 +68,7 @@ namespace DotnetCoreServer.Models
                     SELECT 
                     user_loginID, user_DeviceCode, user_password, 
                     user_name, user_email, user_url, 
-                    user_register_Time, user_isPay
+                    user_register_Time, user_isPay, user_limitPayDate
                     FROM tb_users 
                     WHERE user_loginID = '{0}' ",
                      LoginID);
@@ -106,9 +107,9 @@ namespace DotnetCoreServer.Models
             string query = String.Format(
                 @"INSERT INTO tb_users (user_loginID, user_DeviceCode, user_password, user_name, user_email, 
                 user_url ,user_register_Time,user_isPay ,user_limitPayDate) VALUES ('{0}','{1}','{2}','{3}','{4}',
-                '{5}', '{6}' , '{7}' , '{8}' )",
+                '{5}', now() , '{6}' ,  now() )",
                     user.User_loginID, user.User_DeviceCode, user.User_password,  user.User_name,  user.User_email, 
-                     user.User_url,  user.User_register_Time ,  user.User_isPay,  user.User_limitPayDate);
+                     user.User_url,    user.User_isPay);
 
             Console.WriteLine(query);
 
