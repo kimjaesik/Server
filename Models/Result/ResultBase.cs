@@ -3,8 +3,13 @@ using System;
 namespace DotnetCoreServer.Models
 {
     public class ResultBase{
-        public string Message;
+        public string message;
+        /* 
         public int ResultCode;
+*/
 
+        public int ErrorNo;
+        public string ErrorCode;
+     
     }
 }

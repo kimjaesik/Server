@@ -18,39 +18,53 @@ namespace DotnetCoreServer.Controllers
 
         // GET api/user/5
         [HttpGet("{id}")]
-        public User Get(int id)
+        public User Get(string user_loginID)
         {
-            User user = userDao.GetUser(id);
+            User user = userDao.GetUser(user_loginID);
             return user;
         }
 
-        // POST Login/Facebook
+        // GET Login/VersionCheck/{게임버전}  
+        [HttpGet("{version}")]
+        public ResultBase VersionCheck(int version)
+        {
+            ResultBase result = new ResultBase();
+
+            //뉴로월드 처음시작할때 버전 체크용 . 나중에 어캐할까 구현예정.
+            //일단은 패스  
+            result.ErrorCode = "Sucess";
+
+            return result;
+        }
+
+        // POST Login/RegisterByLoginID       //로그인 아이디로 등록.
         [HttpPost]
-        public LoginResult Facebook([FromBody] User requestUser)
+        public LoginResult RegisterByLoginID([FromBody] User requestUser)
         {
 
             LoginResult result = new LoginResult();
+      
+            Console.WriteLine(requestUser.User_loginID);
+
+            User user = userDao.FindUserByLoginID(requestUser.User_loginID);
             
-            User user = userDao.FindUserByFUID(requestUser.FacebookID);
-            
-            if(user != null && user.UserID > 0){ // 이미 가입되어 있음
-                
+            if(user != null ){ // 이미 가입되어 있음
+                //에러 보내야 함.
                 result.Data = user;
-                result.Message = "OK";
-                result.ResultCode = 1;
+                result.ErrorCode = "Sucess";
+                result.ErrorNo = 1;
 
                 return result;
 
-            } else { // 회원가입 해야함
-                
-                string AccessToken = Guid.NewGuid().ToString();
+            } else { // 없으면  가입시킴..
+                requestUser.User_register_Time = DateTime.Now;
+                requestUser.User_limitPayDate = DateTime.Now;
 
-                requestUser.AccessToken = AccessToken;
                 userDao.InsertUser(requestUser);
-                user = userDao.FindUserByFUID(requestUser.FacebookID);
+                user = userDao.FindUserByLoginID(requestUser.User_loginID);
                 result.Data = user;
-                result.Message = "New User";
-                result.ResultCode = 2;
+                result.ErrorCode = "Sucess";
+                result.ErrorNo = 2;
 
                 return result;
 

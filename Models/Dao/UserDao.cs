@@ -6,8 +6,8 @@ using System.Collections.Generic;
 namespace DotnetCoreServer.Models
 {
     public interface IUserDao{
-        User FindUserByFUID(string FacebookID);
-        User GetUser(long UserID);
+        User FindUserByLoginID(string LoginID);
+        User GetUser(string LoginID);
         User InsertUser(User user);
         bool UpdateUser(User user);
     }
@@ -20,13 +20,14 @@ namespace DotnetCoreServer.Models
             this.db = db;
         }
 
-        public User FindUserByFUID(string FacebookID){
+        public User FindUserByLoginID(string LoginID){
             User user = new User();
             using(MySqlConnection conn = db.GetConnection())
             {   
                 string query = String.Format(
-                    "SELECT user_id, facebook_id, facebook_name, facebook_photo_url, point, created_at, access_token FROM tb_user WHERE facebook_id = '{0}'",
-                     FacebookID);
+                    @"SELECT user_loginID, user_DeviceCode, user_password, user_name, user_email, user_url, user_register_Time, user_isPay ,user_limitPayDate
+                     FROM tb_users WHERE user_loginID = '{0}'",
+                     LoginID);
 
                 Console.WriteLine(query);
 
@@ -37,13 +38,16 @@ namespace DotnetCoreServer.Models
                     {
                         if (reader.Read())
                         {
-                            user.UserID = reader.GetInt64(0);
-                            user.FacebookID = reader.GetString(1);
-                            user.FacebookName = reader.GetString(2);
-                            user.FacebookPhotoURL = reader.GetString(3);
-                            user.Point = reader.GetInt32(4);
-                            user.CreatedAt = reader.GetDateTime(5);
-                            user.AccessToken = reader.GetString(6);
+                            user.User_loginID = reader.GetString(0);
+                            user.User_DeviceCode = reader.GetString(1);
+                            user.User_password = reader.GetString(2);
+                            user.User_name = reader.GetString(3);
+                            user.User_email = reader.GetString(4);
+                            user.User_url = reader.GetString(5);
+                            user.User_register_Time = reader.GetDateTime(6);
+                            user.User_isPay = reader.GetString(7);
+                            user.User_limitPayDate = reader.GetDateTime(8);
+
                             return user;
                         }
                     }
@@ -53,22 +57,20 @@ namespace DotnetCoreServer.Models
             return null;
         }
         
-        public User GetUser(long UserID){
+        public User GetUser(string LoginID){
             User user = new User();
             using(MySqlConnection conn = db.GetConnection())
             {   
-                string query = String.Format(
+
+                 string query = String.Format(
                     @"
                     SELECT 
-                        user_id, facebook_id, facebook_name, 
-                        facebook_photo_url, point, created_at, 
-                        access_token, diamond, health, defense, damage,
-                        speed, health_level, defense_level, 
-                        damage_level, speed_level,
-                        level, experience
-                    FROM tb_user 
-                    WHERE user_id = {0}",
-                     UserID);
+                    user_loginID, user_DeviceCode, user_password, 
+                    user_name, user_email, user_url, 
+                    user_register_Time, user_isPay
+                    FROM tb_users 
+                    WHERE user_loginID = '{0}' ",
+                     LoginID);
 
                 Console.WriteLine(query);
 
@@ -79,26 +81,16 @@ namespace DotnetCoreServer.Models
                     {
                         if (reader.Read())
                         {
-                            user.UserID = reader.GetInt64(0);
-                            user.FacebookID = reader.GetString(1);
-                            user.FacebookName = reader.GetString(2);
-                            user.FacebookPhotoURL = reader.GetString(3);
-                            user.Point = reader.GetInt32(4);
-                            user.CreatedAt = reader.GetDateTime(5);
-                            user.AccessToken = reader.GetString(6);
+                            user.User_loginID = reader.GetString(0);
+                            user.User_DeviceCode = reader.GetString(1);
+                            user.User_password = reader.GetString(2);
+                            user.User_name = reader.GetString(3);
+                            user.User_email = reader.GetString(4);
+                            user.User_url = reader.GetString(5);
+                            user.User_register_Time = reader.GetDateTime(6);
+                            user.User_isPay = reader.GetString(7);
+                            user.User_limitPayDate = reader.GetDateTime(8);
 
-                            user.Diamond = reader.GetInt32(7);
-                            user.Health = reader.GetInt32(8);
-                            user.Defense = reader.GetInt32(9);
-                            user.Damage = reader.GetInt32(10);
-                            user.Speed = reader.GetInt32(11);
-                            user.HealthLevel = reader.GetInt32(12);
-                            user.DefenseLevel = reader.GetInt32(13);
-                            user.DamageLevel = reader.GetInt32(14);
-                            user.SpeedLevel = reader.GetInt32(15);
-                            user.Level = reader.GetInt32(16);
-                            user.Experience = reader.GetInt32(17);
-                            
                         }
                     }
                 }
@@ -110,9 +102,13 @@ namespace DotnetCoreServer.Models
 
         public User InsertUser(User user){
             
+       
             string query = String.Format(
-                "INSERT INTO tb_user (facebook_id, facebook_name, facebook_photo_url, point, access_token, created_at) VALUES ('{0}','{1}','{2}',{3}, '{4}', now())",
-                    user.FacebookID, user.FacebookName, user.FacebookPhotoURL, 0, user.AccessToken);
+                @"INSERT INTO tb_users (user_loginID, user_DeviceCode, user_password, user_name, user_email, 
+                user_url ,user_register_Time,user_isPay ,user_limitPayDate) VALUES ('{0}','{1}','{2}','{3}','{4}',
+                '{5}', '{6}' , '{7}' , '{8}' )",
+                    user.User_loginID, user.User_DeviceCode, user.User_password,  user.User_name,  user.User_email, 
+                     user.User_url,  user.User_register_Time ,  user.User_isPay,  user.User_limitPayDate);
 
             Console.WriteLine(query);
 
@@ -135,15 +131,13 @@ namespace DotnetCoreServer.Models
             {
                 string query = String.Format(
                     @"
-                    UPDATE tb_user SET 
-                        health = {0}, defense = {1}, damage = {2}, speed = {3},
-                        health_level = {4}, defense_level = {5}, damage_level = {6}, speed_level = {7},
-                        diamond = {8}, point = {9}
-                    WHERE user_id = {10}
+                    UPDATE tb_users SET 
+                        user_password = {0}, user_name = {1}, 
+                        user_email = {2}, user_url = {3}, user_isPay = {4}, user_limitPayDate = {5}
+                    WHERE user_loginID = {6}
                     ",
-                    user.Health, user.Defense, user.Damage, user.Speed,
-                    user.HealthLevel, user.DefenseLevel, user.DamageLevel, user.SpeedLevel,
-                    user.Diamond, user.Point, user.UserID
+                    user.User_password , user.User_name, user.User_email, user.User_url,
+                    user.User_isPay, user.User_limitPayDate,  user.User_loginID
                      );
 
                 Console.WriteLine(query);

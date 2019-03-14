@@ -17,10 +17,10 @@ namespace DotnetCoreServer.Controllers
         }
 
         [HttpGet]
-        public UserResult Info(long UserID){
+        public UserResult Info(string user_loginID){
 
             UserResult result = new UserResult();
-            result.Data = userDao.GetUser(UserID);
+            result.Data = userDao.GetUser(user_loginID);
             return result;
 
         }
@@ -31,10 +31,10 @@ namespace DotnetCoreServer.Controllers
             UserResult result = new UserResult();
             userDao.UpdateUser(requestUser);
             
-            result.Data = userDao.GetUser(requestUser.UserID);
+            result.Data = userDao.GetUser(requestUser.User_loginID);
 
-            result.ResultCode = 1;
-            result.Message = "Success";
+            result.ErrorNo = 1;
+            result.ErrorCode = "Success";
 
             return result;
         }

@@ -24,10 +24,10 @@ namespace DotnetCoreServer
 
         public IConfigurationRoot Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        //의존성 주입 
         public void ConfigureServices(IServiceCollection services)
         {
-            // Add framework services.
+           
             services.AddMvc()
                .AddJsonOptions(options =>
                {
@@ -36,14 +36,12 @@ namespace DotnetCoreServer
             
             services.AddSingleton<IConfiguration>(Configuration);
             services.AddSingleton<IUserDao,UserDao>();
-            services.AddSingleton<IStageResultDao,StageResultDao>();
-            services.AddSingleton<IRankDao,RankDao>();
-            services.AddSingleton<IUpgradeDao,UpgradeDao>();
+          
             services.AddSingleton<IDB,DB>();
 
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        // 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
