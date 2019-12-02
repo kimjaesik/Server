@@ -9,7 +9,8 @@ namespace DotnetCoreServer.Controllers
 {
     [Route("api/[controller]")]
     public class ValuesController : Controller
-    {
+    {   
+        IUserDao userDao;
         // GET api/values
         [HttpGet]
         public IEnumerable<string> Get()
@@ -19,9 +20,10 @@ namespace DotnetCoreServer.Controllers
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public User Get(int id)
+        public User Get(string id)
         {
-            User user = new User();
+            User user = userDao.GetUser(id);
+
             return user;
         }
 
